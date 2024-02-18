@@ -1,21 +1,22 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Login;
-use Validator;
-use Auth;
-use Hash;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use App\Models\User;
 
-class LoginController extends Controller
+class UserController extends Controller
 {
-    //create new user form database
+   
     public function createUser(Request $request)
     {
         try {
             //Validated
-            $validateUser = validator::make($request->all(), 
+            $validateUser = Validator::make($request->all(), 
             [
                 'name' => 'required',
                 'email' => 'required|email|unique:users,email',
@@ -30,7 +31,7 @@ class LoginController extends Controller
                 ], 401);
             }
 
-            $user = Login::create([
+            $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password)
@@ -39,7 +40,7 @@ class LoginController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'User Created Successfully',
-                /* 'token' => $user->createToken("API TOKEN")->plainTextToken */
+                'token' => $user->createToken("API TOKEN")->plainTextToken
             ], 200);
 
         } catch (\Throwable $th) {
@@ -50,14 +51,18 @@ class LoginController extends Controller
         }
     }
 
-   
+    /**
+     * Login The User
+     * @param Request $request
+     * @return User
+     */
     public function loginUser(Request $request)
     {
         try {
-            $validateUser = validator::make($request->all(), 
+            $validateUser = Validator::make($request->all(), 
             [
                 'email' => 'required|email',
-                'password' => 'required',
+                'password' => 'required'
             ]);
 
             if($validateUser->fails()){
@@ -75,12 +80,12 @@ class LoginController extends Controller
                 ], 401);
             }
 
-            $user = Login::where('email', $request->email)->first();
+            $user = User::where('email', $request->email)->first();
 
             return response()->json([
                 'status' => true,
                 'message' => 'User Logged In Successfully',
-               /*  'token' => $user->createToken("API TOKEN")->plainTextToken */
+                'token' => $user->createToken("API TOKEN")->plainTextToken
             ], 200);
 
         } catch (\Throwable $th) {
@@ -90,5 +95,4 @@ class LoginController extends Controller
             ], 500);
         }
     }
-
 }
