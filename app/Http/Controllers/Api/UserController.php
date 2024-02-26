@@ -5,13 +5,33 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
+    use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 
 class UserController extends Controller
 {
-   
+    public function forgotPassword(Request $request)
+    {
+        try{
+            $validateUser = Validator::make($request->all(),
+            [
+                'email_verified_at' =>$request->email,
+            ]);
+            if ($validateUser->fails()){
+                return response()->json([
+                    'status' => false,
+                    'message' => 'validation error',
+                    'errors' => $validateUser->errors()
+                ],401);
+            }
+            
+
+        }catch (\Throwable $th){
+
+        }
+    }
+
     public function createUser(Request $request)
     {
         try {

@@ -10,6 +10,10 @@ use Hash;
 
 class LoginController extends Controller
 {
+
+    public function updateUser (Request $request){
+        
+    }
     //create new user form database
     public function createUser(Request $request)
     {
